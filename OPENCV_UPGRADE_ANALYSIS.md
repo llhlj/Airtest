@@ -135,7 +135,11 @@ def _init_sift():
 
 ### SURF 状态
 - 所有版本都在 `cv2.xfeatures2d` (contrib)
-- **结论**: 仍需要 opencv-contrib-python
+- OpenCV 4.4.0+: SURF 被标记为专利算法(nonfree)，pip 预编译包中**默认禁用**
+- **结论**: 
+  - 使用 pip 安装的 `opencv-contrib-python` 4.4.0+：**SURF 不可用**
+  - 如需使用，必须从源码编译 OpenCV 并设置 `OPENCV_ENABLE_NONFREE=ON`
+  - **建议**: 使用 SIFT 或模板匹配替代 SURF
 
 ### BRIEF 状态
 - 所有版本都在 `cv2.xfeatures2d` (contrib)
@@ -165,11 +169,20 @@ def _init_sift():
 
 升级后需测试的功能点：
 1. SIFT 特征匹配
-2. SURF 特征匹配（需要 contrib）
+2. SURF 特征匹配（**OpenCV 4.4.0+ pip 包中不可用**）
 3. BRIEF 特征匹配（需要 contrib）
 4. 模板匹配
 5. 多尺度模板匹配
 6. 图像读写功能
+
+### 已知限制
+
+| 算法 | OpenCV 4.4.0+ (pip) | 源码编译 | 替代方案 |
+|------|---------------------|----------|----------|
+| SIFT | ✅ 可用（主模块） | ✅ 可用 | - |
+| SURF | ❌ **禁用** | ✅ 可用（需设置标志） | SIFT、模板匹配 |
+| BRIEF | ✅ 可用（contrib） | ✅ 可用 | - |
+| ORB/BRISK/KAZE/AKAZE | ✅ 可用（主模块） | ✅ 可用 | - |
 
 ---
 
@@ -182,3 +195,20 @@ requirements.txt 修改:
 ```
 
 **注意**: 如果只需要 SIFT，可以考虑只安装 `opencv-python`（主模块），不需要 contrib
+
+## 八、升级影响总结
+
+### 正面影响
+- ✅ SIFT 从 contrib 移到主模块，更稳定易用
+- ✅ 可以使用更新的 OpenCV 功能
+- ✅ 其他检测器（ORB/BRISK/KAZE/AKAZE/BRIEF）正常工作
+
+### 负面影响
+- ❌ SURF 在 pip 安装的 OpenCV 4.4.0+ 中不可用
+- ❌ 如需 SURF，必须从源码编译
+
+### 用户建议
+1. **使用模板匹配**（tpl/mstpl）- airtest 推荐的最佳方法
+2. **使用 SIFT** - 升级后已移至主模块，稳定可用
+3. **避免使用 SURF** - 专利限制，未来可能完全移除
+4. **如需 SURF** - 考虑使用 OpenCV 4.4.0 以下版本或从源码编译
