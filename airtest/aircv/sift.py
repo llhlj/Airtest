@@ -79,7 +79,13 @@ def find_all_sift(im_source, im_search, threshold=0.8, rgb=True, good_ratio=FILT
 
 def _init_sift():
     """Make sure that there is SIFT module in OpenCV."""
-    if cv2.__version__.startswith("3."):
+    if cv2.__version__.startswith("4."):
+        # OpenCV 4.4.0+, sift is in main module
+        try:
+            sift = cv2.SIFT_create(edgeThreshold=10)
+        except:
+            raise NoSIFTModuleError("There is no SIFT module in your OpenCV environment !")
+    elif cv2.__version__.startswith("3."):
         # OpenCV3.x, sift is in contrib module, you need to compile it seperately.
         try:
             sift = cv2.xfeatures2d.SIFT_create(edgeThreshold=10)

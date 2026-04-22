@@ -12,9 +12,8 @@ class Settings(object):
     LOG_FILE = "log.txt"
     RESIZE_METHOD = staticmethod(cocos_min_strategy)
     # keypoint matching: kaze/brisk/akaze/orb, contrib: sift/surf/brief
+    # SIFT is available in main module since OpenCV 4.4.0+
     CVSTRATEGY = ["mstpl", "tpl", "sift", "brisk"]
-    if Version('3.4.2') < Version(cv2.__version__) < Version('4.4.0'):
-        CVSTRATEGY = ["mstpl", "tpl", "brisk"]
     KEYPOINT_MATCHING_PREDICTION = True
     THRESHOLD = 0.7  # [0, 1]
     THRESHOLD_STRICT = None  # dedicated parameter for assert_exists
